@@ -128,4 +128,5 @@ cython_debug/
 # Temp files
 temp.py
 testenv
-Questions.MkDocs
+Questions.md
+*Data
