@@ -9,24 +9,24 @@ import logging
 
 load_dotenv()
 
-# logging.basicConfig(
-#     filename="poly_router.log",
-#     level = logging.DEBUG,
-#     format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-#     filemode="w",
-# )
+logging.basicConfig(
+    filename="poly_router.log",
+    level = logging.DEBUG,
+    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    filemode="w",
+)
 
-# # Only your library logs
-# logging.getLogger("polyrouter").setLevel(logging.DEBUG)
+# Only your library logs
+logging.getLogger("polyrouter").setLevel(logging.DEBUG)
 
-# # Silence noisy third-party loggers
-# logging.getLogger("httpx").setLevel(logging.WARNING)
-# logging.getLogger("httpcore").setLevel(logging.WARNING)
-# logging.getLogger("hpack").setLevel(logging.WARNING)
-# logging.getLogger("cerebras").setLevel(logging.WARNING)
-# logging.getLogger("urllib3").setLevel(logging.WARNING)
-# logging.getLogger("groq").setLevel(logging.WARNING)
-# logging.getLogger("google_genai").setLevel(logging.WARNING)
+# Silence noisy third-party loggers
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("hpack").setLevel(logging.WARNING)
+logging.getLogger("cerebras").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("groq").setLevel(logging.WARNING)
+logging.getLogger("google_genai").setLevel(logging.WARNING)
 
 
 GROQ_MODEL = [
@@ -73,3 +73,44 @@ CEREBRAS_KEYS = [
     os.getenv("CEREBRAS_API_KEY4"),
     os.getenv("CEREBRAS_API_KEY5")
 ]
+
+# Voice configurations
+VOICE_CONFIGS = {
+    'en': "en-US-JennyNeural",
+    'hi': "hi-IN-SwaraNeural",
+    'es': "es-MX-JorgeNeural",
+    'fr': "fr-FR-HenriNeural",
+    'de': "de-DE-KillianNeural",
+    'ja': "ja-JP-KeitaNeural",
+    'ko': "ko-KR-SunHiNeural",
+    'zh': "zh-CN-XiaoxiaoNeural",
+    'it': "it-IT-DiegoNeural",
+    'pt': "pt-BR-AntonioNeural",
+    'ru': "ru-RU-DmitryNeural",
+    'nl': "nl-NL-MaartenNeural",
+    'tr': "tr-TR-AhmetNeural",
+    'pl': "pl-PL-MarekNeural",
+    'id': "id-ID-ArdiNeural",
+    'th': "th-TH-NiwatNeural",
+    'vi': "vi-VN-HoaiMyNeural"
+}
+
+LANGUAGE_MAP = {
+    'en': "English",
+    'hi': "Hindi",
+    'es': "Spanish",
+    'fr': "French",
+    'de': "German",
+    'ja': "Japanese",
+    'ko': "Korean",
+    'zh': "Chinese (Mandarin)",
+    'it': "Italian",
+    'pt': "Portuguese (Brazilian)",
+    'ru': "Russian",
+    'nl': "Dutch",
+    'tr': "Turkish",
+    'pl': "Polish",
+    'id': "Indonesian",
+    'th': "Thai",
+    'vi': "Vietnamese"
+}

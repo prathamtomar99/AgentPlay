@@ -1,5 +1,6 @@
 from Utils.Singleton import Singleton
-from config import GEMINI_KEYS, GEMINI_MODEL, CEREBRAS_KEYS, CEREBRAS_MODEL, GROQ_KEYS, GROQ_MODEL
+from Utils.Exception import UnsupportedLanguage
+from config import GEMINI_KEYS, GEMINI_MODEL, CEREBRAS_KEYS, CEREBRAS_MODEL, GROQ_KEYS, GROQ_MODEL, LANGUAGE_MAP
 from langgraph.graph import StateGraph, START, END
 import json
 from typing import TypedDict
@@ -148,7 +149,10 @@ class TranslatorAgent():
         workflow.add_edge("Translator", "Validator")
         self.app = workflow.compile()
 
-    def call(self,PREVIOUS_SEGMENT,CURRENT_SEGMENT,FUTURE_SEGMENT,TARGET_LANGUAGE):
+    def call(self,PREVIOUS_SEGMENT,CURRENT_SEGMENT,FUTURE_SEGMENT,TARGET_LANGUAGE_ABBREVIATION):
+        TARGET_LANGUAGE = LANGUAGE_MAP.get(TARGET_LANGUAGE_ABBREVIATION)
+        if(TARGET_LANGUAGE is None):
+            raise UnsupportedLanguage(f"[Translation.py:] {TARGET_LANGUAGE_ABBREVIATION} is not supported.")
         initial_state = {
             "PREVIOUS_SEGMENT": PREVIOUS_SEGMENT,
             "CURRENT_SEGMENT": CURRENT_SEGMENT,

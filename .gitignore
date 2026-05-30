@@ -128,5 +128,7 @@ cython_debug/
 # Temp files
 temp.py
 testenv
-Questions.md
-*Data
+Questions.md 
+Data
+text_json.json
+text_json.txt
