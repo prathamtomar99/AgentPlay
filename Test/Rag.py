@@ -6,6 +6,7 @@ rag_obj.initialize_collection()
 
 from Utils.YT_Transcript import TranscriptStore
 import json
+import logging
 
 yt_api = TranscriptStore()
 
@@ -22,6 +23,7 @@ yt_remake_data = rag_obj.remake_segments(yt_data)
 rag_obj.process_and_store_transcript(data_segment=yt_data)
 
 output = rag_obj.hybrid_search(video_id=yt_data["video_id"],user_query="what is idea of nation")
+logger = logging.getLogger(__name__)
 
 for op in output:
-    print(op)
+    logger.debug(op)

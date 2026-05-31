@@ -6,6 +6,7 @@ from Utils.Translation import TranslatorAgent
 from config import MAX_WORKERS, OUTPUT_FOLDER
 from concurrent.futures import ThreadPoolExecutor
 import json
+import logging
 
 def pipeline(PREVIOUS_SEGMENT, CURRENT_SEGMENT, FUTURE_SEGMENT, TARGET_LANGUAGE_ABBREVIATION,FILE_NAME): # TARGET_LANGUAGE = 'hi' / 'en' etc
     try:
@@ -18,16 +19,16 @@ def pipeline(PREVIOUS_SEGMENT, CURRENT_SEGMENT, FUTURE_SEGMENT, TARGET_LANGUAGE_
         )
         
         # tts
+        os.makedirs(os.path.join("Data"), exist_ok=True)
         Audio().tts(
             TEXT = TRANSLATED_TEXT,
             LANG_ABBREVIATION=TARGET_LANGUAGE_ABBREVIATION,
-            # OUTPUT_FILE= os.path.join(),
-            OUTPUT_FILE= FILE_NAME,
+            OUTPUT_FILE= os.path.join('Data',FILE_NAME),
         )
     except Exception as e:
         return f"Error in {FILE_NAME} : {e}"
 
-    print(f"Completed for: {FILE_NAME}")
+    logging.getLogger(__name__).info(f"Completed for: {FILE_NAME}")
     return f"Completed : {FILE_NAME}" 
 
 # # SETUP 1
@@ -74,6 +75,6 @@ if __name__ == "__main__":
 
         for future in futures:
             try:
-                print(future.result())
+                logging.getLogger(__name__).info(future.result())
             except Exception as e:
-                print(e)
+                logging.getLogger(__name__).exception(e)

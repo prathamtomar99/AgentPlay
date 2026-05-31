@@ -1,6 +1,7 @@
 import os
 import uuid
 from qdrant_client import QdrantClient, models
+import logging
 from dotenv import load_dotenv
 from Utils.Singleton import Singleton
 from fastembed import TextEmbedding, SparseTextEmbedding
@@ -35,9 +36,9 @@ class Rag:
                 field_name="video_id",
                 field_schema=models.PayloadSchemaType.KEYWORD,
             )
-            print(f"Collection '{self.collection_name}' successfully created.")
+            logging.getLogger(__name__).info(f"Collection '{self.collection_name}' successfully created.")
         else:
-            print(f"Collection '{self.collection_name}' already exists.")
+            logging.getLogger(__name__).info(f"Collection '{self.collection_name}' already exists.")
 
     def video_exists(self, video_id: str) -> bool:
         try:
@@ -50,7 +51,7 @@ class Rag:
             )
             return count_result.count > 0
         except Exception as e:
-            print(f"Error checking if video exists: {e}")
+            logging.getLogger(__name__).exception(f"Error checking if video exists: {e}")
             return False
         
 
@@ -95,16 +96,16 @@ class Rag:
         data_segment["segments"] = new_larger_segments
         return data_segment
 
-    def process_and_store_transcript(self, data_segment: list[dict]):
+    def process_and_store_transcript(self, data_segment: list[dict],VIDEO_ID:str=None):
         if not data_segment:
             return
         
         video_id = data_segment["video_id"]
         if self.video_exists(video_id):
-            print(f"Transcript for video '{video_id}' is already stored. Skipping.")
+            logging.getLogger(__name__).info(f"Transcript for video '{video_id}' is already stored. Skipping.")
             return
         
-        print(f"Processing new video: {video_id}...")
+        logging.getLogger(__name__).info(f"Processing new video: {video_id}...")
 
         data_segment = self.remake_segments(data_segment)
         
@@ -136,7 +137,8 @@ class Rag:
             )
 
         self.client.upsert(collection_name=self.collection_name, points=points)
-        print(f"Stored transcript for video: {data_segment['video_id']}")
+        logging.getLogger(__name__).info(f"Stored transcript for video: {data_segment['video_id']}")
+        return f"Transcript Generated for : {VIDEO_ID}."
 
     def hybrid_search(self, video_id: str, user_query: str, limit: int = 5):
         query_dense = list(self.dense_model.embed([user_query]))[0].tolist()
@@ -188,5 +190,6 @@ if __name__=="__main__":
 
     output = rag_obj.hybrid_search(video_id=yt_data["video_id"],user_query="what is idea of nation")
 
+    logger = logging.getLogger(__name__)
     for op in output:
-        print(op)
+        logger.debug(op)

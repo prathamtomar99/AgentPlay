@@ -4,7 +4,7 @@ from Utils.Singleton import Singleton
 import asyncio
 import edge_tts
 from Utils.Exception import UnsupportedLanguage
-from config import OUTPUT_FOLDER, VOICE_CONFIGS
+from config import VOICE_CONFIGS
 import os
 
 @Singleton
@@ -12,7 +12,21 @@ class Audio:
     def __init__(self):
         pass
            
-    def tts(self,TEXT,LANG_ABBREVIATION,OUTPUT_FILE): # LANG - en,hi,es....
+# File responsible to hold a class which translates text into speech
+
+from Utils.Singleton import Singleton
+import asyncio
+import edge_tts
+from Utils.Exception import UnsupportedLanguage
+from config import VOICE_CONFIGS
+import os
+
+@Singleton
+class Audio:
+    def __init__(self):
+        pass
+           
+    def tts(self, TEXT, LANG_ABBREVIATION, OUTPUT_FILE): # LANG - en,hi,es....
         if(TEXT.strip() == ""):
             return True
         
@@ -20,8 +34,7 @@ class Audio:
         if voice is None:
             raise UnsupportedLanguage(f"[Audio.py:] {LANG_ABBREVIATION} is not supported.")
         
-        OUTPUT_FILE = os.path.join(OUTPUT_FOLDER,OUTPUT_FILE)
-        
-        communicate = edge_tts.Communicate(TEXT, voice)
+        # Added rate="+25%" to increase the speed to 1.25x
+        communicate = edge_tts.Communicate(TEXT, voice, rate="+15%")
         asyncio.run(communicate.save(OUTPUT_FILE))
         return True

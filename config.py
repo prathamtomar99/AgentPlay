@@ -1,36 +1,54 @@
 # configurations of project
-MAX_WORKERS = 30 # max number of requests to be executed in parallel (translate -> tts pipeline)
+MAX_WORKERS = 30 # max number of requests to be executed in parallel (app.py)
 OUTPUT_FOLDER = "Data"
 
 from polyrouter import LLMOrchestrator
 import os
 from dotenv import load_dotenv
 import logging
+import sys
 
 load_dotenv()
 
-logging.basicConfig(
-    filename="poly_router.log",
-    level = logging.DEBUG,
-    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filemode="w",
-)
+# Centralized logging: single root logger writing to a file
+LOG_FILE = "poly_router.log"
 
-# Only your library logs
+# Configure root logger
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+
+# Remove any pre-existing handlers to avoid duplicates
+for h in list(root_logger.handlers):
+    root_logger.removeHandler(h)
+
+file_handler = logging.FileHandler(LOG_FILE, mode="w")
+file_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(formatter)
+root_logger.addHandler(file_handler)
+
+# Optional: also keep a minimal console output (comment out if not desired)
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+root_logger.addHandler(console_handler)
+
+# Only your library logs at DEBUG
 logging.getLogger("polyrouter").setLevel(logging.DEBUG)
 
 # Silence noisy third-party loggers
-logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("httpcore").setLevel(logging.WARNING)
-logging.getLogger("hpack").setLevel(logging.WARNING)
-logging.getLogger("cerebras").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-logging.getLogger("groq").setLevel(logging.WARNING)
-logging.getLogger("google_genai").setLevel(logging.WARNING)
+for noisy in ("httpx", "httpcore", "hpack", "cerebras", "urllib3", "groq", "google_genai"):
+    logging.getLogger(noisy).setLevel(logging.WARNING)
+
+# Ensure werkzeug (Flask dev server) logs propagate to root file handler
+werkzeug_logger = logging.getLogger("werkzeug")
+for h in list(werkzeug_logger.handlers):
+    werkzeug_logger.removeHandler(h)
+werkzeug_logger.propagate = True
 
 
 GROQ_MODEL = [
-    "llama-3.1-8b-instant",
+    # "llama-3.1-8b-instant",
     "openai/gpt-oss-20b",
     "openai/gpt-oss-120b",
     "llama-3.3-70b-versatile",
@@ -47,7 +65,7 @@ GROQ_KEYS = [
 ]
 
 GEMINI_MODEL = [
-    "gemini-2.5-flash-lite"
+    # "gemini-2.5-flash-lite"
     "gemini-2.5-flash",
 ]
 GEMINI_KEYS = [
@@ -63,7 +81,7 @@ GEMINI_KEYS = [
 
 CEREBRAS_MODEL = [
     "gpt-oss-120b",
-    # "llama3.1-8b", 
+    "zai-glm-4.7"
 ]
 CEREBRAS_KEYS = [
     os.getenv("CEREBRAS_API_KEY0"),

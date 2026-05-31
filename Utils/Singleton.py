@@ -18,4 +18,6 @@ if __name__=="__main__":
 
     t1 = Temp()
     t2 = Temp()
-    print(t1 is t2)
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(f"Singleton test: {t1 is t2}")

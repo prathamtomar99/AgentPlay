@@ -7,6 +7,7 @@ from Utils.Exception import UnsupportedLanguage
 from config import SUPPORTED_LANGUAGES
 import logging
 import json
+import pprint
 
 logget = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class TranscriptStore:
         if(transcript is None):
             return None
         segments = []
-        for segment in transcript:
+        for segment in transcript[:20]:
             # print(segment)
             seg = {}
             seg["text"] = segment.text
@@ -46,17 +47,42 @@ class TranscriptStore:
             seg["duration"] = segment.duration
             segments.append(seg)
 
-        data_json = {
+        data = {
             "language" : lang,
             "video_id" : video_id,
             "segments" : segments
         }
-        return json.dumps(data_json,indent = 4)
+
+        data_fixed = self.fix_overlapping_segments(data)
+        return json.dumps(data_fixed,indent = 4)
+    
+    def fix_overlapping_segments(self,data_segment: dict) -> dict:
+        segments = data_segment.get("segments", [])
+        
+        for i in range(len(segments) - 1):
+            current_seg = segments[i]
+            next_seg = segments[i + 1]
+            
+            current_end = current_seg["start"] + current_seg["duration"]
+            
+            # Check for overlap
+            if current_end > next_seg["start"]:
+                new_duration = next_seg["start"] - current_seg["start"]
+                current_seg["duration"] = max(0.01, round(new_duration, 3))
+                
+        data_segment["segments"] = segments
+        return data_segment
     
 
 if __name__ == "__main__":
     yt_api = TranscriptStore()
-
-    print(yt_api.list_available_languages("4O1Fk6edPkI"))
-    print(yt_api.get_transcript("4O1Fk6edPkI"))
-    print(yt_api.get_segments("4O1Fk6edPkI"))
+    logget.info(yt_api.list_available_languages("4O1Fk6edPkI"))
+    
+    data = json.loads(yt_api.get_segments("4O1Fk6edPkI"))
+    logget.info(data["language"])
+    logget.info(data["video_id"])
+    for seg in (data["segments"])[:100]:
+        logget.debug("\t %s", seg['text'])
+        logget.debug("\t %s", seg['start'])
+        logget.debug('\t %s', seg['duration'])
+        logget.debug('')
