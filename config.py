@@ -114,3 +114,6 @@ LANGUAGE_MAP = {
     'th': "Thai",
     'vi': "Vietnamese"
 }
+
+
+SUPPORTED_LANGUAGES = ['en','hi','nl'] # languages which we can fetch YT transcript api, can be increased depending upon the multilingual trasnlations model support

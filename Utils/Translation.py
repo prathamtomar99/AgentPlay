@@ -1,3 +1,8 @@
+# React Agnet responsilbe for translation audio from a Source Language to Target Language
+# Test/TranslationAgent.ipynb for more infomration 
+# Used PolyRouter : https://github.com/prathamtomar99/PolyRouter
+
+
 from Utils.Singleton import Singleton
 from Utils.Exception import UnsupportedLanguage
 from config import GEMINI_KEYS, GEMINI_MODEL, CEREBRAS_KEYS, CEREBRAS_MODEL, GROQ_KEYS, GROQ_MODEL, LANGUAGE_MAP
@@ -11,6 +16,10 @@ LLM = LLMOrchestrator(
         "groq_models" : GROQ_MODEL,
         "groq_keys" : GROQ_KEYS,
     },
+    # gemini={ # has the least limits : better avoid using
+    #     "gemini_models" : GEMINI_MODEL,
+    #     "gemini_keys" : GEMINI_KEYS,
+    # },
     cerebras={
         "cerebras_models": CEREBRAS_MODEL,
         "cerebras_keys" : CEREBRAS_KEYS

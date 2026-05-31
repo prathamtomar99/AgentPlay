@@ -1,3 +1,5 @@
+# File that generates Segments to stress test Translation + TTS pipeline
+
 import json
 import random
 
@@ -197,6 +199,8 @@ FUTURE_SEGMENTS = [
 ]
 
 
+## Setup 1: Random
+
 with open("test_json.json","w") as f:
     data = {}
     for i in range(100):
@@ -213,3 +217,14 @@ with open("test_json.json","w") as f:
 
     data_json = json.dumps(data,indent=4)
     f.write(data_json)
+
+
+## Setup 2
+from Utils.YT_Transcript import TranscriptStore
+import json
+
+yt_api = TranscriptStore()
+
+with open("test.json",'w') as f:
+    yt_data = yt_api.get_segments("4O1Fk6edPkI")
+    json.dump(json.loads(yt_data),f,indent = 4)

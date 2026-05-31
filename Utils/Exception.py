@@ -12,3 +12,7 @@ class BaseException(Exception):
 class UnsupportedLanguage(BaseException):
     def __init__(self,message):
         super().__init__(message)
+
+class UnsupportedLanguage(Exception):
+    def __init__(self,message):
+        super().__init__(message)
